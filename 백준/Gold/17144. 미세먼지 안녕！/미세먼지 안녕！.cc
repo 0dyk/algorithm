@@ -1,121 +1,89 @@
 #include<iostream>
-#include<queue>
-
-
 using namespace std;
 
-int r, c, t, air, ap = 0;
-int map[51][51];
-int tmap[51][51];
-int dx[4] = { 0,0,1,-1 };
-int dy[4] = { 1,-1,0,0 };
+int R, C, T;
+int arr[51][51];
+int air;
+int dxy[4][2] = { {0,1}, {0,-1}, {1, 0}, {-1, 0} };
 
-void input() {
-	cin >> r >> c >> t;
+/*
+ * 미세먼지 확산.
+ * N * N 탐색 미세 먼지 발견 시 확산하여
+ * tmp에 저장
+ * arr에 템프 덮어씌우기
+*/
+void pm() {
+	int tmp[51][51] = {0, };
+	for (int r = 0; r < R; r++) {
+		for (int c = 0; c < C; c++) {
+			if (arr[r][c] == 0 || arr[r][c] == -1) continue;	// 빈 곳 or 공기청정기
 
-	for (int i = 0; i < r; i++) {
-		for (int j = 0; j < c; j++) {
-			cin >> map[i][j];
-			if (map[i][j] == -1) {
-				air = i;
+			int spread = arr[r][c] / 5;
+			for (int i = 0; i < 4; i++) {
+				int nr = r + dxy[i][0];
+				int nc = c + dxy[i][1];
+				
+				if (nr < 0 || nr >= R || nc < 0 || nc >= C || (nc == 0 && (nr == air || nr == air - 1))) continue;
+				tmp[nr][nc] += spread;
+				arr[r][c] -= spread;
 			}
-			else if (map[i][j] != 0) {
-				ap += map[i][j];
-			}
+
+			tmp[r][c] += arr[r][c];
+		}
+	}
+	for (int r = 0; r < R; r++) {
+		for (int c = 0; c < C; c++) {
+			arr[r][c] = tmp[r][c];
 		}
 	}
 }
 
-void cv() {
-	for (int i = 0; i < r; i++) {
-		for (int j = 0; j < c; j++) {
-			tmap[i][j] = map[i][j];
-		}
-	}
-}
-
-void airpolution() {
-	cv();
-	for (int x = 0; x < r; x++) {
-		for (int y = 0; y < c; y++) {
-			if (tmap[x][y] == 0 || tmap[x][y] == -1 || tmap[x][y] < 5) continue;
-
-			int spread = tmap[x][y] / 5;
-
-			for (int j = 0; j < 4; j++) {
-				int nx = x + dx[j];
-				int ny = y + dy[j];
-
-				if (nx < 0 || nx >= r || ny < 0 || ny >= c) continue;
-				if (ny == 0 && (nx == air || nx == air - 1)) continue;
-
-				map[x][y] -= spread;
-				map[nx][ny] += spread;
-			}
-		}
-	}
-}
-
-void airclean() {
-	int x = air - 2;
-	int y = 0;
-	ap -= map[x][y];
-	while (x > 0) {
-		map[x][y] = map[x - 1][y];
-		x--;
-	}
-	while (y < c - 1) {
-		map[x][y] = map[x][y + 1];
-		y++;
-	}
-	while (x < air - 1) {
-		map[x][y] = map[x + 1][y];
-		x++;
-	}
-	while (y > 0) {
-		map[x][y] = map[x][y - 1];
-		if (map[x][y] == -1) map[x][y] = 0;
-		y--;
-	}
-
-	x = air + 1;
-	y = 0;
-	ap -= map[x][y];
-	while (x < r - 1) {
-		map[x][y] = map[x + 1][y];
-		x++;
-	}
-	while (y < c - 1) {
-		map[x][y] = map[x][y + 1];
-		y++;
-	}
-	while (x > air) {
-		map[x][y] = map[x - 1][y];
-		x--;
-	}
-	while (y > 0) {
-		map[x][y] = map[x][y - 1];
-		if (map[x][y] == -1) map[x][y] = 0;
-		y--;
-	}
-}
-
-void solve() {
+/*
+ * 공기청정기를 따라 공기 순환
+*/
+void airCleaner() {
+	for (int r = air + 1; r < R - 1; r++) arr[r][0] = arr[r + 1][0];
+	for (int r = air - 2; r > 0; r--) arr[r][0] = arr[r - 1][0];
 	
-	for (int time = 0; time < t; time++) {
-		airpolution();
-		airclean();
+	for (int c = 0; c < C - 1; c++) {
+		arr[0][c] = arr[0][c + 1];
+		arr[R - 1][c] = arr[R - 1][c + 1];
 	}
 
-	cout << ap;
+	for (int r = R - 1; r > air; r--) arr[r][C - 1] = arr[r - 1][C - 1];
+	for (int r = 0; r < air - 1; r++) arr[r][C - 1] = arr[r + 1][C - 1];
+
+	for (int c = C-1; c > 1; c--) {
+		arr[air - 1][c] = arr[air - 1][c - 1];
+		arr[air][c] = arr[air][c - 1];
+	}
+
+	arr[air - 1][1] = arr[air][1] = 0;
+	arr[air - 1][0] = arr[air][0] = -1;
 }
 
 int main() {
-	ios::sync_with_stdio(false);
-	cin.tie(NULL);
+	ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL);
+	cin >> R >> C >> T;
+	for (int r = 0; r < R; r++) {
+		for (int c = 0; c < C; c++) {
+			cin >> arr[r][c];
+			if (arr[r][c] == -1) air = r;
+		}
+	}
 
-	input();
-	solve();
+	for(int i = 0; i < T; i++) {
+		pm();
+		airCleaner();
+	}
+
+	int sum = 0;
+	for (int r = 0; r < R; r++) {
+		for (int c = 0; c < C; c++) {
+			sum += arr[r][c];
+		}
+	}
+	cout << sum + 2;
 
 	return 0;
 }
