@@ -7,8 +7,6 @@ public class Main {
 	static int N, M, R;
 	static int[][] arr;
 
-	static int[][] dxy = { { 0, 1 }, { -1, 0 }, { 0, -1 }, { 1, 0 } };
-
 	static public void solve() {
 		int x = N, y = M;
 		int nx = x, ny = y;
@@ -16,7 +14,7 @@ public class Main {
 		for(;x >= 2 && y >= 2;) {
 			int size = 2 * (x + y) - 4;
 			
-			for(int t = 0; t < R % size; t++) {	// cnt만큼 회전
+			for(int t = 0; t < R % size; t++) {	// R & size 만큼 회전
 				int tmp = arr[nx - 1][ny - 1];
 				for (int j = 0; j < y - 1; j++)
 					arr[nx - 1][ny - 1 - j] = arr[nx - 1][ny - 2 - j];
@@ -50,20 +48,21 @@ public class Main {
 				arr[i][j] = Integer.parseInt(str[j]);
 			}
 		}
+		
 		solve();
-		print();
-
-	}
-
-	public static void print() {
+		
 		for (int i = 0; i < N; i++) {
 			for (int j = 0; j < M; j++) {
-				System.out.print(arr[i][j]);
+				sb.append(arr[i][j]);
 				if (j != M - 1)
-					System.out.print(" ");
+					sb.append(" ");
 				else
-					System.out.println();
+					sb.append("\n");
 			}
 		}
+		
+		System.out.println(sb);
+
 	}
+
 }
