@@ -9,7 +9,7 @@ int parent[MAX_N];
  * My Parent = Me
  */
 void init() {
-	for (int i = 1; i <= N; i++) parent[i] = i;
+	for (int i = 0; i <= N; i++) parent[i] = -1;
 }
 
 /*
@@ -17,7 +17,7 @@ void init() {
  * parent[x]에 넣어주기
  */
 int find(int x) {
-	if (parent[x] == x) return x;
+	if (parent[x] < 0) return x;
 	else return parent[x] = find(parent[x]);
 }
 
@@ -32,10 +32,8 @@ void doUnion(int a, int b) {
 
 	if (a == b) return;
 	
-	parent[b] = a;
-
-	//if (parent[a] < parent[b]) { parent[a] += parent[b]; parent[b] = a; }
-	//else { parent[b] += parent[a]; parent[a] = b; }
+	if (parent[a] < parent[b]) {parent[a] += parent[b]; parent[b] = a;}
+	else {parent[b] += parent[a]; parent[a] = b;}
 }
 
 int main() {
