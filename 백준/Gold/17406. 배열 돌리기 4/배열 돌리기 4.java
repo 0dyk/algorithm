@@ -2,15 +2,13 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
 public class Main {
-	
-	static StringBuilder sb = new StringBuilder();
 	static int N, M, K;
 	static int[][] arr;
 	static int r, c, s;
 	static int[][] permu;
 	static boolean[] visited;
 	static int min;
-	
+	static int[] t;
 	public static void main(String[] args) throws Exception{
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		
@@ -38,14 +36,14 @@ public class Main {
 
 		min = Integer.MAX_VALUE;
 		
-		int[] tmp = new int[K];
-		permutation(0, tmp);
+        t = new int[K];
+		permutation(0);
 
 		System.out.println(min);
 	}
 	
 	
-	public static void permutation(int cnt, int[] t) {
+	public static void permutation(int cnt) {
 		if(cnt == K) {	
 			for(int i = 1; i <= N; i++) {
 				int tmp = 0;
@@ -61,7 +59,7 @@ public class Main {
 			if(visited[i]) continue;
 			visited[i] = true;
 			rotate(permu[i][0] - permu[i][2], permu[i][1] - permu[i][2], permu[i][2] * 2);
-			permutation(cnt + 1, t);
+			permutation(cnt + 1);
 			visited[i] = false;
 			rerotate(permu[i][0] - permu[i][2], permu[i][1] - permu[i][2], permu[i][2] * 2);
 		}
