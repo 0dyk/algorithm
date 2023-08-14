@@ -4,7 +4,7 @@ import java.io.InputStreamReader;
 public class Main {
 
 	static StringBuilder sb = new StringBuilder();
-	static int N, R, C, cnt, res;
+	static int N, R, C, cnt;
 	
 	public static void main(String[] args) throws Exception {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -14,21 +14,14 @@ public class Main {
 		R = Integer.parseInt(str[1]);
 		C = Integer.parseInt(str[2]);
 
-		cnt = 0; res = 0;
-		int size = (int) Math.pow(2, N);
-		solve(0, 0, size);
+		cnt = 0;
+		solve(0, 0, 1 << N);
 
-		System.out.println(res);
+		System.out.println(cnt);
 	}
 
 	private static void solve(int r, int c, int size) {		
-		if(size == 1) {
-			if(r == R && c == C) {
-				res = cnt;
-			}
-			return;
-		}
-
+		if(r == R && c == C) return;
 		
 		if (R < r + size / 2 && C < c + size / 2) {
 			solve(r, c, size / 2);
@@ -45,7 +38,6 @@ public class Main {
 			cnt += 3 * ( size / 2 * size / 2);
 			solve(r + size / 2, c + size / 2, size / 2);
 		}
-
 	}
 
 }
