@@ -8,7 +8,6 @@ public class Main {
 	static StringBuilder sb = new StringBuilder();
 	static int N;
 	static int[][] arr;
-	static Queue<Character> queue = new ArrayDeque<>();
 	
 	public static void main(String[] args) throws Exception {
 		
@@ -26,26 +25,22 @@ public class Main {
 		}
 		
 		search(0, 0, N);
-		
-		while(!queue.isEmpty()) {
-			sb.append(queue.poll());
-		}
-		
+	
 		System.out.println(sb);
 	}
 	
 	private static void search(int x, int y, int size) {
 		if(check(x, y, size)) {
-			queue.offer((char)(arr[x][y] + '0'));
+			sb.append(arr[x][y]);
 			return;
 		}
 			
-		queue.offer('(');	
+		sb.append("(");	
 		search(x, y, size / 2);
 		search(x, y + size / 2, size / 2);
 		search(x + size / 2, y, size / 2);
 		search(x + size / 2, y + size / 2, size / 2);
-		queue.offer(')');
+		sb.append(")");
 	}
 	
 	private static boolean check(int x, int y, int size) {
