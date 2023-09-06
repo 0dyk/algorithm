@@ -25,19 +25,22 @@ long long solution(int cap, int n, vector<int> deliveries, vector<int> pickups) 
         
         // i번째 수거를 위해 몇 번 돌아야 하는지?
         int cnt = 0;
-        while(true){
-            // 0보다 작다
-            // 배달해야할 상자X, 수거해야할 상자 X면 break
-            if(del <= 0 && pic <= 0) break;
+        
+        // del과 pic중 최대값을 찾아서 연산하면 더 빠를듯?
+        
+        
+        // cap과 d~, p~가 비슷하니까 그냥 while문
+        while(del > 0 || pic > 0){            
             
-            // 한바쿠 돌면
+            // 한바쿠 돌았어요
             cnt++;
             
-            // cap만큼 del과 pic 처리
+            // cap만큼 del과 pic처리해주고
             del -= cap;
             pic -= cap;
         }
-        // del, pic가 음수인 경우 다음 집에서 사용
+        
+        // del, pic가 음수인 경우 다음 집에서 챙길 수 있지요
         
         // 총 거리에 합산
         *dist += (i+1) * 2 * cnt;
