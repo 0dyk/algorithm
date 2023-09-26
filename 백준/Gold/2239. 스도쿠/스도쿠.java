@@ -1,80 +1,77 @@
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Main {
-	
-	static StringBuilder sb = new StringBuilder();
-	
-	static int[][] arr;
-	static List<int []> blank;
-	static boolean maked;
+public class Main  {
+	static int[][] board = new int[9][9];
+	static int countZero = 0;
+	static boolean[][] isShowedRow = new boolean[9][10], isShowedCol = new boolean[9][10];
+	static boolean[][][] isShowedBox = new boolean[3][3][10];
 	
 	public static void main(String[] args) throws IOException {
-		
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		
-		arr = new int[9][9];
-		blank = new ArrayList<>();
-		
-		for(int i = 0; i < 9; i++) {
-			String str = br.readLine();
-			for(int j = 0; j< 9; j++) {
-				arr[i][j] = str.charAt(j) - '0';
-			
-				if(arr[i][j] == 0) {
-					blank.add(new int[] {i, j});
-				}
-			}
-		}
-		
-		maked = false;
-		dfs(0);		
-	}
-
-	// cnt번째  blank 체크 중
-	private static void dfs(int cnt) {
-		if(maked) return;
-		
-		if(cnt == blank.size()) {
-			for(int i = 0; i < 9; i++) {
-				for(int j = 0; j< 9; j++) {
-					sb.append(arr[i][j]);
-					if(j == 8)sb.append("\n");
-				}
-			}
-			System.out.println(sb);
-			maked = true;
-			
-			return;
-		}
-
-		boolean[] check = new boolean[10];
-		
-		int x = blank.get(cnt)[0], y = blank.get(cnt)[1];
-		
-		for(int i = 0; i < 9; i++) {
-			check[arr[i][y]] = true;
-			check[arr[x][i]] = true;
-		}
-		
-		for(int i = x - x % 3; i < x - x % 3 + 3; i++) {
-			for(int j = y - y % 3; j < y - y % 3 + 3; j++) {
-				check[arr[i][j]]= true;
-			}
-		}
-		
-		for(int i = 1; i <= 9; i++) {	
-			if(!check[i]) {
-				arr[x][y] = i;
-				dfs(cnt + 1);
+		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+		BufferedWriter out = new BufferedWriter(new OutputStreamWriter(System.out));
+		StringBuilder sb = new StringBuilder();
 				
-				// 굳이 안해도 되긴 함
-				arr[x][y] = 0;
+		for(int i=0; i<9; i++) {
+			String input = in.readLine();
+			for(int j=0; j<9; j++) {
+				board[i][j] = input.charAt(j) - '0';
+				if(board[i][j]==0) countZero++;
+				
+				isShowedRow[i][board[i][j]] = true;
+				isShowedCol[j][board[i][j]] = true;
+				isShowedBox[i/3][j/3][board[i][j]] = true;
 			}
 		}
+		
+		solve(0,0, countZero);
+		
+		for(int i=0; i<9; i++) {
+			for(int j=0; j<9; j++) {
+				sb.append(board[i][j]);
+			}
+			sb.append("\n");
+		}
+		System.out.println(sb);
 	}
 	
+	static boolean solve(int sy, int sx, int cntZ) {
+//		System.out.println("\n\n====="+countZero+"=====");
+
+		for(int i=sy; i<9; i++) {
+//			System.out.print("\ni : "+i+"\nj : ");
+			int init=0;
+			if(i==sy) init=sx;
+			for(int j = init; j<9; j++) {
+//				System.out.print(j+" ");
+				if(board[i][j]!=0) continue;
+//				List<Integer> possible = new ArrayList<Integer>();
+				for(int k=1; k<=9; k++) {
+					if(!isShowedRow[i][k] && 
+							!isShowedCol[j][k] && 
+								!isShowedBox[i/3][j/3][k] ) {
+						board[i][j] = k;
+						isShowedRow[i][k] = true;
+						isShowedCol[j][k] = true;
+						isShowedBox[i/3][j/3][k] = true;
+						
+						if(solve(i,j+1, cntZ-1)) 
+							return true;
+						board[i][j] = 0;
+						isShowedRow[i][k] = false;
+						isShowedCol[j][k] = false;
+						isShowedBox[i/3][j/3][k] = false;
+					}					
+				}
+				return false;
+			}
+		}
+		return cntZ==0;
+		
+	}	
 }
