@@ -42,7 +42,7 @@ string solution(int n, int m, int x, int y, int r, int c, int k) {
             // 경계 체크
             if (nx < 0 || nx >= N || ny < 0 || ny >= M) continue;
 
-            // 이동거리가 정확한 경우만
+            // 이동거리 초과시
             if (dist(nx, ny) + answer.length() > K) continue;
                 
             answer += dir[i];
