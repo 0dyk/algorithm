@@ -29,12 +29,14 @@ string solution(int n, int m, int x, int y, int r, int c, int k) {
     
     N = n; M = m; X = x - 1; Y = y - 1; R = r - 1; C = c - 1; K = k;
 
-    
+    // 최단거리보다 K가 작거나, 최단거리 + 홀수인 경우
     if(dist(X,Y) > K || (K - dist(X, Y)) % 2 == 1){
         return "impossible";
     }
     
+    // 도착 시 종료
     while (!(X == R && Y == C && answer.size() == K)) {
+        // 우선 순위에 따라 전진
         for (int i = 0; i < 4; i++) {
             int nx = X + dx[i];
             int ny = Y + dy[i];
@@ -42,7 +44,7 @@ string solution(int n, int m, int x, int y, int r, int c, int k) {
             // 경계 체크
             if (nx < 0 || nx >= N || ny < 0 || ny >= M) continue;
 
-            // 이동거리 초과시
+            // 이동거리 초과시 가지 않음
             if (dist(nx, ny) + answer.length() > K) continue;
                 
             answer += dir[i];
