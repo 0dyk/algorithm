@@ -3,133 +3,123 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayDeque;
 import java.util.Queue;
-import java.util.StringTokenizer;
 
 public class Main {
+
+	static final int[] dx = {0, 0, 1, -1};
+	static final int[] dy = {1, -1, 0, 0};
 	
-	static class Vertex{
-		int y;
-		int x;
-		int count;
-		public Vertex(int y, int x, int count) {
-			super();
-			this.y = y;
-			this.x = x;
-			this.count = count;
-		}
-		@Override
-		public String toString() {
-			return "Vertex [y=" + y + ", x=" + x + ", count=" + count + "]";
-		}
-		
-	}
+	static int R, C;
+	static char[][] arr;
 	
-	// 상 하 좌 우
-	static int dy[] = {-1, 1, 0, 0};
-	static int dx[] = {0, 0, -1, 1};
+	// 물이 퍼지는 시간
+	static int[][] time;
 	
-	static int R, C, result=Integer.MAX_VALUE;
-	static char[][] map;
+	// 고슴 도치 이동 시간
+	static int[][] gosm;
+
+	// 방문체크
 	static boolean[][] visited;
 	
-	static Queue<int[]> flood = new ArrayDeque<>();
-		
-	public static void main(String[] args) throws IOException {
-		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-		String input[] = in.readLine().split(" ");
-		R = Integer.parseInt(input[0]);
-		C = Integer.parseInt(input[1]);
-		map = new char[R][C];
-		
-		int sy = 0;
-		int sx = 0;
-		
-		for(int i=0; i<R; i++) {
-			String str = in.readLine();
-			for(int j=0; j<C; j++) {
-				map[i][j] = str.charAt(j);
-				if(map[i][j] == 'S') {
-					sy = i;
-					sx = j;
-				}
-				if(map[i][j] == '*') {
-					flood.offer(new int[]{i, j});
-				}
-			}
-		}
-		
-		solve(sy, sx);
-		
-		// result가 초기값이라면 KAKTUS 출력
-		if(result==Integer.MAX_VALUE)
-			System.out.println("KAKTUS");
-		else
-			System.out.println(result);
-			
-	}
+	// 고슴 도치 위치
+	static int sx, sy;
 	
-	static void solve(int sy, int sx) {
-		Queue<Vertex> q = new ArrayDeque<>();
+	// 비버굴 위치
+	static int ex, ey;
+	
+	/*
+	 * . : 빈 공간
+	 * * : 물
+	 * X : 돌
+	 * D : 비버 굴
+	 * S : 고슴도치
+	 * 
+	 */
+	
+
+
+	public static void main(String[] args) throws IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		
+		String[] str = br.readLine().split(" ");
+		
+		R = Integer.parseInt(str[0]);
+		C = Integer.parseInt(str[1]);
+		
+		arr = new char[R][C];
+		time = new int[R][C];
+		gosm =new int[R][C];
 		visited = new boolean[R][C];
 		
-		q.offer(new Vertex(sy, sx, 0));
-		visited[sy][sx] = true;
+		// 물 퍼지는 시간 체크
+		Queue<int[]> q = new ArrayDeque<>();
+
+		for(int i = 0; i < R; i++) {
+			String s = br.readLine();
+			for(int j = 0; j < C; j++) {
+				arr[i][j] = s.charAt(j);
+				if(arr[i][j] == '*') q.offer(new int[] {i, j});
+				else if(arr[i][j] == 'S') {sx = i; sy = j;}
+				else if(arr[i][j] == 'D') {ex = i; ey = j;}
+			}
+		} //end::input
 		
 		while(!q.isEmpty()) {
-			int qSize = q.size();
-			for(int s=0; s<qSize; s++) {
-				Vertex cur = q.poll();
-				
-				if(map[cur.y][cur.x] == 'D') {
-					result = Math.min(result, cur.count);
-					continue;
-				}
-				for(int d=0; d<dy.length; d++) {
-					int ny = cur.y + dy[d];
-					int nx = cur.x + dx[d];
-					
-					if(canGo(ny, nx)) {
-						visited[ny][nx] = true;
-						q.offer(new Vertex(ny, nx, cur.count+1));
-					}
-				}
-			}
-			// 물 범람
-			qSize = flood.size();
-			for(int s=0; s<qSize; s++) {
-				int fy = flood.peek()[0];
-				int fx = flood.poll()[1];					
-
-				for(int d=0; d<dy.length; d++) {
-					int ny = fy+dy[d];
-					int nx = fx+dx[d];
-					
-					if(inMap(ny, nx) && map[ny][nx]!='D' && map[ny][nx]!='X' && map[ny][nx]!='*') {
-						map[ny][nx] = '*';
-						flood.offer(new int[] {ny, nx});
-					}
-				}
-			}
+			int[] cur = q.poll();
 			
-		}
-	}
-	
-	static boolean canGo(int y, int x) {
-		if(inMap(y, x) && !visited[y][x] && map[y][x]!='*' && map[y][x]!='X') {
-			if(map[y][x]=='D') return true;
-			for(int d=0; d<dy.length; d++) {
-				int ny = y+dy[d];
-				int nx = x+dx[d];
+			for(int i = 0; i < 4; i++) {
+				int nx = cur[0] + dx[i];
+				int ny = cur[1] + dy[i];
 				
-				if(inMap(ny, nx) && map[ny][nx]=='*') return false;
-			}
+				// 경꼐 체크
+				if(nx < 0 || nx >= R || ny < 0 || ny >= C) continue;
 			
-			return true;
-		}
+				// 빈공간, 아직 오염 안된 경우
+				if(arr[nx][ny] == '.' && time[nx][ny] == 0) {
+					time[nx][ny] = time[cur[0]][cur[1]] + 1;
+					q.offer(new int[] {nx, ny});
+				}
+			}
+		} //end::water
 		
-		return false;
-	}
-	static boolean inMap(int y, int x) {
-		return 0<=y && y<R && 0<=x && x<C;
+		q.offer(new int[] {sx, sy});
+		visited[sx][sy] = true;
+		
+		int res = -1;
+		boolean fin = true;
+		while(!q.isEmpty() && fin) {
+			int x = q.peek()[0];
+			int y = q.peek()[1];
+			q.poll();
+			
+			for(int i = 0; i< 4; i++) {
+				int nx = x + dx[i];
+				int ny = y + dy[i];
+				
+				// 경계 체크, 벽, 물 체크
+				if(nx < 0 || nx >= R || ny < 0 || ny >= C || 
+						arr[nx][ny] == 'X' || arr[nx][ny] == '*' || visited[nx][ny]) continue;
+				
+				// 도착
+				if(nx == ex && ny == ey) {
+					res = gosm[x][y] + 1;
+					fin = false;
+					break;
+				}
+				
+				// 물이 안오는 공간이거나, 물 퍼지는 시간보다 먼저 도착하는 경우
+				if(time[nx][ny] == 0 || time[nx][ny] > gosm[x][y] + 1) {
+					gosm[nx][ny] = gosm[x][y] + 1;
+					visited[nx][ny] = true;
+					q.offer(new int[] {nx, ny});
+				}				
+			}
+		}//end::gosm
+		
+		if(res == -1) {
+			System.out.println("KAKTUS");
+		}else {
+			System.out.println(res);
+		}
 	}
 }
