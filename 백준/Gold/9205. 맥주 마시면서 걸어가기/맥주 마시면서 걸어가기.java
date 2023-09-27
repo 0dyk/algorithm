@@ -1,103 +1,67 @@
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.OutputStreamWriter;
+import java.util.StringTokenizer;
 
 public class Main {
-
-	// 편의점 수
-	static int N;
-	
-	// 집 좌표
-	static int hx, hy;
-	
-	// 편의점 배열 좌표
-	static List<int[]> arr;
-	
-	// 락 페스티벌 좌표
-	static int ex, ey;
-	
-	// dp
-	static int[][] dp;
-	
-	public static void main(String[] args) throws IOException {
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		
-		int T = Integer.parseInt(br.readLine());
-		
-		for(int tc = 1; tc <= T; tc++) {
-			N = Integer.parseInt(br.readLine());
+	public static void main(String[] args) throws NumberFormatException, IOException {
+		BufferedWriter out = new BufferedWriter(new OutputStreamWriter(System.out));
+		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+		int T = Integer.parseInt(in.readLine());
+		for(int tc=1; tc<=T; tc++) {
+			// 입력 받기
+			int N = Integer.parseInt(in.readLine());
+			int V = N+2;
+			int beers = 20;	// 보유 중인 맥주 개수
 			
-			arr = new ArrayList<>();
-			dp = new int[N + 2][N + 2];
+			int pos[][] = new int[N+2][2];
 			
-			for(int i = 0; i < N+2; i++) {
-				for(int j = 0; j< N+2; j++) {
-					if(i != j) dp[i][j] = Integer.MAX_VALUE;
+			StringTokenizer st = new StringTokenizer(in.readLine());
+			pos[0][0] = Integer.parseInt(st.nextToken());
+			pos[0][1] = Integer.parseInt(st.nextToken());
+			
+			for(int i=1; i<N+1; i++) {
+				st = new StringTokenizer(in.readLine());
+				pos[i][0] = Integer.parseInt(st.nextToken());
+				pos[i][1] = Integer.parseInt(st.nextToken());
+			}
+			st = new StringTokenizer(in.readLine());
+			pos[N+1][0] = Integer.parseInt(st.nextToken());
+			pos[N+1][1] = Integer.parseInt(st.nextToken());
+			
+			
+			// 인접행렬 생성
+			int[][] adjMatrix = new int[N+2][N+2];
+			
+			for(int i=0; i<V; i++) {
+				for(int j=0; j<V; j++) {
+					if(dist(pos[i][0], pos[i][1], pos[j][0], pos[j][1]) <= 1000) {
+						adjMatrix[i][j] = 1;
+					}
 				}
 			}
 			
-			int a, b;
-			String[] str;
-			for(int i = 0; i < N + 2; i++) {
-				str = br.readLine().split(" ");
-				a = Integer.parseInt(str[0]);
-				b = Integer.parseInt(str[1]);
-				arr.add(new int[] {a, b});
-			}
-			// 0 : 출발지
-			// arr.size() - 1 : 도착지
-			
-			for(int i = 0; i < N+2; i++) {
-				for(int j = 0; j< N+2; j++) {
-					if(i != j) dp[i][j] = Integer.MAX_VALUE;
-				}
-			}
-			
-			// i -> j로 갈 수 있으면 0, 아니면 1
-			for(int i = 0; i < N+1; i++) {
-				for(int j = 1; j < N+2; j++) {
-					if(i == j) continue;
-					
-					int dist = Math.abs(arr.get(i)[0] - arr.get(j)[0])
-								+ Math.abs(arr.get(i)[1] - arr.get(j)[1]);
-					
-					if(dist <= 50 * 20) dp[i][j] = 0;
-				}
-			}
-						
-			// 경유지
-			for(int i = 0; i < N + 2; i++) {
-				// 출발지
-				for(int j = 0; j < N + 2; j++) {
-					// 출발지 == 경유지인 경유
-					if(i == j) continue;
-					
-					for(int k = 0; k < N + 2; k++) {
-						// 도착지와 출 or 경이 같은 경우
-						if(i == k || j == k) continue;
-						
-						// 출발지에서 도착지로 가는 거리보다 출 -> 경 -> 도가 짧은 경우
-						if(dp[j][i] == 0 && 0 == dp[i][k]) {
-							dp[j][k] = dp[j][i] + dp[i][k];
+			// 플로이드 워셜
+			for(int k=0; k<N+2; k++) {
+				for(int i=0; i<N+2; i++) {
+					for(int j=0; j<N+2; j++) {
+						if(adjMatrix[i][k] == 1 && adjMatrix[k][j] == 1) {
+							adjMatrix[i][j] = 1;
 						}
 					}
 				}
-			} //end::for
-			
-			if(dp[0][N+1] == Integer.MAX_VALUE) {	
-				System.out.println("sad");
-			}else {
-				System.out.println("happy");
 			}
-		} //end::tc
+			if(adjMatrix[0][N+1] > 0)
+				out.write("happy\n");
+			else
+				out.write("sad\n");
+		}
 		
-		
-		
+		out.close();
 	}
-	
-	
-	
-	
+	static int dist(int sy, int sx, int ey, int ex) {
+		return Math.abs(ey-sy)+Math.abs(ex-sx);
+	}
 }
