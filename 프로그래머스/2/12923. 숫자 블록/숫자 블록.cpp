@@ -19,7 +19,7 @@ vector<int> solution(long long begin, long long end) {
         }
         
         // k값의 범위를 몰랐었어...
-        vector<int> tmp;
+        int tmp = 1;
         
         for(int k = 2; k * k <= i; ++k){    
             if(i % k == 0){
@@ -31,7 +31,7 @@ vector<int> solution(long long begin, long long end) {
                 // 천만 이상이라면 나눈 값(K)를 저장하고
                 // 그 중에서 가장 큰 값을 설치
                 else{
-                    tmp.push_back(k);
+                    tmp = k;
                 }
             }
         }
@@ -39,8 +39,7 @@ vector<int> solution(long long begin, long long end) {
         // 답을 찾지 못한 경우
         // 1 or tmp중 가장 큰 값
         if(answer.size() == idx) {
-            if(tmp.size() == 0) answer.push_back(1);
-            else answer.push_back(tmp[tmp.size() - 1]);
+            answer.push_back(tmp);
         }
     }
     
