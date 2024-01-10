@@ -21,7 +21,7 @@ int solution(vector<string> board) {
     int cnt[2] = {0, 0};
     
     if(oCnt == xCnt){
-        // xCnt가 3개 -> 불가능
+        // 3개 몇개씩 있는지
         for(int i = 0; i < 3; ++i){
             if(board[i][0] == board[i][1] && board[i][1] == board[i][2]){
                 if(board[i][0] == 'X'){
@@ -58,10 +58,10 @@ int solution(vector<string> board) {
         if(cnt[0] != 0) answer = 0;
         
         // X 3개가 2개 이상이다? 불가능
-        else if(cnt[1] > 2) answer = 0;
+        // else if(cnt[1] > 2) answer = 0;
         
-        cout << cnt[0] << " " << cnt[1] << '\n';
-        cout << "마지막으로 X가 놨어요" << '\n';
+        // cout << cnt[0] << " " << cnt[1] << '\n';
+        // cout << "마지막으로 X가 놨어요" << '\n';
     }else if(oCnt == xCnt + 1){
         for(int i = 0; i < 3; ++i){
             if(board[i][0] == board[i][1] && board[i][1] == board[i][2]){
@@ -96,10 +96,10 @@ int solution(vector<string> board) {
         }
         
         if(cnt[1] != 0) answer = 0;
-        else if(cnt[0] > 2) answer = 0;
+        // else if(cnt[0] > 2) answer = 0;
         
-        cout << cnt[0] << " " << cnt[1] << '\n';
-        cout << "마지막으로 O가 놨어요" << '\n';
+        // cout << cnt[0] << " " << cnt[1] << '\n';
+        // cout << "마지막으로 O가 놨어요" << '\n';
     }
     // 말이 안됑
     else{
