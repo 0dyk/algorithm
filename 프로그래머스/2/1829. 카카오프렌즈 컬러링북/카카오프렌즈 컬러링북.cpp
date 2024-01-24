@@ -15,11 +15,11 @@ vector<int> solution(int m, int n, vector<vector<int>> picture) {
     
     for(int i = 0; i < N; ++i){
         for(int j = 0; j < M; ++j){
-            if(picture[i][j] == -1 || picture[i][j] == 0) continue;
+            if(picture[i][j] == 0) continue;
             
             int cnt = 1;
             int now = picture[i][j];
-            picture[i][j] = -1;
+            picture[i][j] = 0;
             
             queue<pair<int,int>> q;
             q.push({i, j});
@@ -35,7 +35,7 @@ vector<int> solution(int m, int n, vector<vector<int>> picture) {
                     if(nx < 0 || nx >= N || ny < 0 || ny >= M || 
                        picture[nx][ny] != now) continue;
                 
-                    picture[nx][ny] = -1;
+                    picture[nx][ny] = 0;
                     cnt++;
                     q.push({nx,ny});
                 }
