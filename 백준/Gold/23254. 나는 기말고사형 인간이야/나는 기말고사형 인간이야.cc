@@ -1,15 +1,14 @@
 #include <iostream>
-#include <vector>
-#include <queue>
 
 using namespace std;
 
 int arr[200001];
-priority_queue<int> pq;
-
 int score[101];
 
 int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(NULL); cout.tie(NULL);
+
     int N, M;
     cin >> N >> M;
 
@@ -33,11 +32,9 @@ int main() {
     }
 
     for (int i = 100; i > 0; --i) {
-        if (N == 0) break;
-
         if (score[i] >= N) {
             sum += i * N;
-            N = 0;
+            break;
         }
         else if(score[i] < N) {
             sum += i * score[i];
