@@ -46,6 +46,7 @@ int solution(int distance, vector<int> rocks, int n) {
         }
     }
     
+    // 모든 바위 제거하는 경우
     if(left == distance) answer = distance;
     else answer = left - 1;
     
