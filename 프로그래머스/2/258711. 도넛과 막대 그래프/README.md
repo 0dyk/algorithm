@@ -1,10 +1,10 @@
 # [level 2] 도넛과 막대 그래프 - 258711 
 
-[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/258711?language=cpp) 
+[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/258711?language=java#) 
 
 ### 성능 요약
 
-메모리: 128 MB, 시간: 159.95 ms
+메모리: 346 MB, 시간: 509.65 ms
 
 ### 구분
 
@@ -16,7 +16,7 @@
 
 ### 제출 일자
 
-2024년 1월 1일 21:23:44
+2025년 03월 03일 10:44:57
 
 ### 문제 설명
 
@@ -99,6 +99,10 @@
 <p><img src="https://grepp-programmers.s3.ap-northeast-2.amazonaws.com/files/production/0c6a6010-3bfe-4578-b3f3-1c75381673b9/%E1%84%83%E1%85%A9%E1%84%82%E1%85%A5%E1%86%BA%E1%84%80%E1%85%AA%E1%84%86%E1%85%A1%E1%86%A8%E1%84%83%E1%85%A24.drawio.png" title="" alt="도넛과막대4.drawio.png"></p>
 
 <p>4번 정점이 생성한 정점이고 막대 모양 그래프 1개, 8자 모양 그래프 2개가 존재합니다. 따라서 [4, 0, 1, 2]를 return 해야 합니다.</p>
+
+<hr>
+
+<p>※ 공지 - 2024년 1월 23일 테스트 케이스가 추가되었습니다. 기존에 제출한 코드가 통과하지 못할 수도 있습니다.</p>
 
 
 > 출처: 프로그래머스 코딩 테스트 연습, https://school.programmers.co.kr/learn/challenges
