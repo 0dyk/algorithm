@@ -11,15 +11,12 @@ int dp[151][151];
 int solution(int alp, int cop, vector<vector<int>> problems) {
     int answer = 0;
     
-    // -2 : max_alp 값은 alp 값보다 같거나 크게
     int max_alp = alp, max_cop = cop;
     
     for(int i = 0; i < problems.size(); ++i){
         if(max_alp < problems[i][0]) max_alp = problems[i][0];
         if(max_cop < problems[i][1]) max_cop = problems[i][1];
     }
-    
-    // cout << max_alp << ' ' << max_cop << '\n';
     
     for(int i = alp; i <= max_alp; ++i) {
         for(int j = cop; j <= max_cop; ++j) {
@@ -31,14 +28,14 @@ int solution(int alp, int cop, vector<vector<int>> problems) {
     
     for(int i = alp; i <= max_alp; ++i) {
         for(int j = cop; j <= max_cop; ++j) {
-            // 공부 1시간
+
             dp[i][j+1] = dp[i][j] + 1 > dp[i][j+1] ? dp[i][j+1] : dp[i][j] + 1;
             dp[i+1][j] = dp[i][j] + 1 > dp[i+1][j] ? dp[i+1][j] : dp[i][j] + 1;
             
-            // 문제 풀기
+
             for(int k = 0; k < problems.size(); ++k){
                 if(i >= problems[k][0] && j >= problems[k][1]){
-                    // -1 : MAX 체크
+
                     int next_alp = max_alp < i + problems[k][2] ? max_alp : i + problems[k][2];
                     int next_cop = max_cop < j + problems[k][3] ? max_cop : j + problems[k][3];
                     
@@ -47,8 +44,6 @@ int solution(int alp, int cop, vector<vector<int>> problems) {
                     }
                 }
             }
-            
-            // cout << "alp : " << i << ", cop : " << j << ", time : " << dp[i][j] << '\n';
         }
     }
     
