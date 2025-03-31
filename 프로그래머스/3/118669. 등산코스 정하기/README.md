@@ -1,10 +1,10 @@
 # [level 3] 등산코스 정하기 - 118669 
 
-[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/118669) 
+[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/118669?language=java) 
 
 ### 성능 요약
 
-메모리: 53.6 MB, 시간: 57.72 ms
+메모리: 428 MB, 시간: 4063.90 ms
 
 ### 구분
 
@@ -16,7 +16,7 @@
 
 ### 제출 일자
 
-2024년 03월 20일 20:11:31
+2025년 03월 31일 12:29:16
 
 ### 문제 설명
 
