@@ -6,12 +6,14 @@
 
 using namespace std;
 
-int dp[200][200];
+int dp[151][151];
 
 int solution(int alp, int cop, vector<vector<int>> problems) {
     int answer = 0;
     
+    // -2 : max_alp 값은 alp 값보다 같거나 크게
     int max_alp = alp, max_cop = cop;
+    
     for(int i = 0; i < problems.size(); ++i){
         if(max_alp < problems[i][0]) max_alp = problems[i][0];
         if(max_cop < problems[i][1]) max_cop = problems[i][1];
@@ -24,9 +26,7 @@ int solution(int alp, int cop, vector<vector<int>> problems) {
             dp[i][j] = MAX_SCORE;
         }
     }
-    
-    if(alp >= max_alp && cop >= max_cop) return 0;
-    
+
     dp[alp][cop] = 0;
     
     for(int i = alp; i <= max_alp; ++i) {
@@ -38,6 +38,7 @@ int solution(int alp, int cop, vector<vector<int>> problems) {
             // 문제 풀기
             for(int k = 0; k < problems.size(); ++k){
                 if(i >= problems[k][0] && j >= problems[k][1]){
+                    // -1 : MAX 체크
                     int next_alp = max_alp < i + problems[k][2] ? max_alp : i + problems[k][2];
                     int next_cop = max_cop < j + problems[k][3] ? max_cop : j + problems[k][3];
                     
