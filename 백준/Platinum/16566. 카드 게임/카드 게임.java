@@ -2,8 +2,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
-import java.util.Iterator;
-import java.util.TreeSet;
 
 public class Main {
 
@@ -12,21 +10,6 @@ public class Main {
     static int[] parent;
     static int[] nodes;
     static int[] answer;
-
-    static class Node implements Comparable<Node> {
-        int x;
-        int parent;
-
-        public Node(int x, int parent) {
-            this.x = x;
-            this.parent = parent;
-        }
-
-        @Override
-        public int compareTo(Node o) {
-            return this.x - o.x;
-        }
-    }
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -41,7 +24,6 @@ public class Main {
         parent = new int[M + 1];
         answer = new int[K];
 
-        // O(NlogN)
         input = br.readLine().split(" ");
         for (int i = 0; i < M; i++) {
             int k = Integer.parseInt(input[i]);
