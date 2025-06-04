@@ -44,7 +44,7 @@ public class Main {
 
         for(int i = 0; i < N; ++i) {
             for(int j = i + 1; j < N; ++j) {
-                if((find(i) != find(j)) && isCross(lines[i], lines[j])) {
+                if(isCross(lines[i], lines[j])) {
                     union(i, j);
                 }
             }
@@ -92,6 +92,8 @@ public class Main {
     static void union (int aIdx, int bIdx) {
         int fAIdx = find(aIdx);
         int fBIdx = find(bIdx);
+
+        if(fAIdx == fBIdx) return;
 
         if(parents[fAIdx] <= parents[fBIdx]) {
             parents[fAIdx] += parents[fBIdx];
