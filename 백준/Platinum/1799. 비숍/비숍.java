@@ -1,84 +1,99 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class Main {
 
-    static int N, maxValue;
+    static int N, digCount;
     static int[][] board;
-    static int[][] dxy = {{1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
+
+    static int[][] dig1, dig2;
+    static List<Integer>[] list;
+    static boolean[] visited;
+    static int[] match;
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
         N = Integer.parseInt(br.readLine());
+        digCount = 2 * N;
         board = new int[N][N];
 
-        for(int i = 0; i < N; i++) {
+        list = new ArrayList[digCount + 1];
+        for(int i = 0; i < list.length; i++) {
+            list[i] = new ArrayList<>();
+        }
+
+        visited = new boolean[digCount];
+        match = new int[digCount];
+
+        for (int i = 0; i < N; i++) {
             String[] str = br.readLine().split(" ");
-            for(int j = 0; j < N; j++) {
+            for (int j = 0; j < N; j++) {
                 board[i][j] = Integer.parseInt(str[j]);
             }
         }
 
+        dig1 = new int[N][N];
+        dig2 = new int[N][N];
+
+        createDig();
+        drawList();
+
         int answer = 0;
+        Arrays.fill(match, -1);
+        for(int i = 1; i < digCount; i++) {
+            Arrays.fill(visited, false);
 
-        maxValue = 0;
-        DFS(0, 0, 0);
-        answer += maxValue;
-
-        maxValue = 0;
-        DFS(0, 1, 0);
-        answer += maxValue;
+            if(matching(i)) {
+                answer++;
+            }
+        }
 
         System.out.println(answer);
     }
 
-    static void DFS(int x, int y, int cnt) {
-        if (x == N) {
-            if (cnt > maxValue) {
-                maxValue  = cnt;
+    static void createDig() {
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < N; j++) {
+                dig1[i][j] = i + j + 1;
             }
-            return;
         }
 
-        // 남은 칸 개수 + cnt가 maxValue보다 작은 경우 return
-
-        int nx = y + 2 >= N ? x + 1 : x;
-        int ny = y + 2 >= N ? (y + 1) % 2 : y + 2;
-
-        // 현재 자리에 놓을 수 있음?
-        if(isPlace(x, y)) {
-            board[x][y] = 2;
-            DFS(nx, ny, cnt + 1);
-            board[x][y] = 1;
+        int k = 1;
+        for (int i = N - 1; i >= 0; i--) {
+            for (int j = 0; j < N; j++) {
+                dig2[i][j] = k + j;
+            }
+            k++;
         }
-
-        DFS(nx, ny, cnt);
     }
-
-    static boolean isPlace(int x, int y) {
-        if(board[x][y] == 0) return false;
-
-        for(int dir = 0; dir < 4; ++dir) {
-            for(int k = 1; k < N; ++k) {
-                int nx = x + dxy[dir][0] * k;
-                int ny = y + dxy[dir][1] * k;
-
-                if(!isBoundary(nx, ny)) {
-                    break;
+    static void drawList() {
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < N; j++) {
+                if(board[i][j] == 1) {
+                    list[dig1[i][j]].add(dig2[i][j]);
                 }
+            }
+        }
+    }
+    static boolean matching(int k) {
+        for(int i = 0; i < list[k].size(); i++) {
+            int cur = list[k].get(i);
 
-                if(board[nx][ny] == 2) {
-                    return false;
+            if(!visited[cur]) {
+                visited[cur] = true;
+
+                if(match[cur] == -1 || matching(match[cur])) {
+                    match[cur] = k;
+                    return true;
                 }
             }
         }
 
-        return true;
-    }
-
-    static boolean isBoundary(int x, int y) {
-        return x >= 0 && x < N && y >= 0 && y < N;
+        return false;
     }
 }
