@@ -9,6 +9,7 @@ public class Main {
     static int[] arr;
     static Node[] segmentTree;
     static StringBuilder sb;
+    static Node MAX_NODE = new Node(-1, 1_000_000_001);
 
     static class Node {
         int idx;
@@ -17,12 +18,6 @@ public class Main {
         public Node(int idx, int x) {
             this.idx = idx;
             this.value = x;
-        }
-
-        public boolean isPriority(Node b) {
-            if(this.value < b.value) return true;
-            else if(this.value == b.value) return this.idx < b.idx;
-            else return false;
         }
     }
 
@@ -61,21 +56,19 @@ public class Main {
         System.out.println(sb.toString());
     }
 
-    static Node makeTree(int left, int right, int node) {
+    static void makeTree(int left, int right, int node) {
         if(left == right) {
-            return segmentTree[node] = new Node(left, arr[left]);
+            segmentTree[node] = new Node(left, arr[left]);
         }
         else {
             int mid = (left + right) / 2;
-            Node a = makeTree(left, mid, node * 2);
-            Node b = makeTree(mid + 1, right, node * 2 + 1);
+            makeTree(left, mid, node * 2);
+            makeTree(mid + 1, right, node * 2 + 1);
 
-            if(a.isPriority(b)) {
-                return segmentTree[node] = new Node(a.idx, a.value);
+            if(segmentTree[node * 2].value <= segmentTree[node * 2 + 1].value) {
+                segmentTree[node] = new Node(segmentTree[node * 2].idx, segmentTree[node * 2].value);
             }
-            else {
-                return segmentTree[node] = new Node(b.idx, b.value);
-            }
+            else segmentTree[node] = new Node(segmentTree[node * 2 + 1].idx, segmentTree[node * 2 + 1].value);
         }
     }
 
@@ -92,15 +85,18 @@ public class Main {
         update(left, mid, node * 2, a, v);
         update(mid + 1, right, node * 2 + 1, a, v);
 
-        int pNode = segmentTree[node * 2].isPriority(segmentTree[node * 2 + 1]) ?
-                node * 2 : node * 2 + 1;
-
-        segmentTree[node].idx = segmentTree[pNode].idx;
-        segmentTree[node].value = segmentTree[pNode].value;
+        if(segmentTree[node * 2].value <= segmentTree[node * 2 + 1].value) {
+            segmentTree[node].idx = segmentTree[node * 2].idx;
+            segmentTree[node].value = segmentTree[node * 2].value;
+        }
+        else {
+            segmentTree[node].idx = segmentTree[node * 2 + 1].idx;
+            segmentTree[node].value = segmentTree[node * 2 + 1].value;
+        }
     }
 
     static Node getValue(int left, int right, int node, int a, int b) {
-        if(a > right || b < left) return null;
+        if(a > right || b < left) return MAX_NODE;
 
         if(a <= left && b >= right) return segmentTree[node];
 
@@ -109,11 +105,7 @@ public class Main {
         Node lNode = getValue(left, mid, node * 2, a, b);
         Node rNode  = getValue(mid + 1, right, node * 2 + 1, a, b);
 
-        if(lNode == null) return rNode;
-        else if (rNode == null) return lNode;
-        else {
-            if(lNode.isPriority(rNode)) return lNode;
-            else return rNode;
-        }
+        if(lNode.value <= rNode.value) return lNode;
+        else return rNode;
     }
 }
