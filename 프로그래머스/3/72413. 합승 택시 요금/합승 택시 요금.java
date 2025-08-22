@@ -1,85 +1,78 @@
 import java.util.*;
 
 class Solution {
-
-    static final int INF = 2100000000;
     
-    static int N;
+    int[] aToPointDist;
+    int[] bToPointDist;
+    int[] sToPointDist;
     
-    static int[] sToPoint;
-    static int[] aToPoint;
-    static int[] bToPoint;
+    List<int[]>[] adjList;
     
-    static List<int[]>[] adjList;
-    
-    public static int solution(int n, int s, int a, int b, int[][] fares) {
-        int answer = INF;
+    public int solution(int n, int s, int a, int b, int[][] fares) {
+        int answer = Integer.MAX_VALUE;
         
-        N = n;
+        // a, b, c에서 다른 지점까지의 최단거리
         
-        sToPoint = new int[n + 1];
-        aToPoint = new int[n + 1];
-        bToPoint = new int[n + 1];
-        
+        // fares to adjList
         adjList = new ArrayList[n + 1];
-        for(int i = 1; i < n + 1; ++i){
+        for(int i = 0; i < n + 1; i++) {
             adjList[i] = new ArrayList<>();
         }
         
-        for(int i = 0; i < fares.length; ++i){
+        for(int i = 0; i < fares.length; i++) {
             adjList[fares[i][0]].add(new int[] {fares[i][1], fares[i][2]});
             adjList[fares[i][1]].add(new int[] {fares[i][0], fares[i][2]});
         }
         
-        // X -> S
-        dijkstra(s, sToPoint);
-        // B -> X
-        dijkstra(b, bToPoint);
-        // A -> X
-        dijkstra(a, aToPoint);
+        // init
+        aToPointDist = new int[n + 1];
+        bToPointDist = new int[n + 1];
+        sToPointDist = new int[n + 1];
         
-        for(int i = 1; i <= n; ++i) {
-        	// if(i == s || i == a || i == b) continue;
-        	
-        	int tmp = sToPoint[i] + aToPoint[i] + bToPoint[i];
-        	
-        	if(tmp < answer) answer = tmp;
+        Arrays.fill(aToPointDist, Integer.MAX_VALUE);
+        Arrays.fill(bToPointDist, Integer.MAX_VALUE);
+        Arrays.fill(sToPointDist, Integer.MAX_VALUE);
+        aToPointDist[a] = 0;
+        bToPointDist[b] = 0;
+        sToPointDist[s] = 0;
+        
+        // 다익스트라 * 3
+        dijkstra(a, aToPointDist);
+        dijkstra(b, bToPointDist);
+        dijkstra(s, sToPointDist);
+        
+        // 최소값
+        for(int i = 1; i <= n; i++) {
+            int sum = aToPointDist[i] + bToPointDist[i] + sToPointDist[i];
+            if(sum < answer) {
+                answer = sum;
+            }
         }
-
         
         return answer;
     }
-
-    public static void dijkstra (int start, int[] dist){
-        Queue<int[]> pq = new PriorityQueue<>((a,b) -> a[0] - b[0]);
+    
+    void dijkstra(int start, int[] dist) {
         
-        for(int i = 0; i <= N; ++i){
-            dist[i] = INF;
-        }
-        
+        PriorityQueue<int[]> pq = new PriorityQueue<>(
+            (a, b) -> a[0] - b[0]
+        );
         pq.offer(new int[] {0, start});
-        dist[start] = 0;
         
-        while(!pq.isEmpty()){
-        	int now = pq.poll()[1];
-        	
-        	for(int i = 0; i < adjList[now].size(); ++i) {
-        		int nx = adjList[now].get(i)[0];
-        		int nc = adjList[now].get(i)[1] + dist[now];
-        		
-        		if(dist[nx] > nc) {
-        			dist[nx] = nc;
-        			pq.offer(new int[] {nc, nx});
-        		}
-        	}
+        while(!pq.isEmpty()) {
+            int cost = pq.peek()[0];
+            int cur = pq.peek()[1];
+            pq.poll();
+            
+            for(int i = 0; i < adjList[cur].size(); i++) {
+                int nx = adjList[cur].get(i)[0];
+                int nc = adjList[cur].get(i)[1];
+                
+                if(dist[nx] > cost + nc) {
+                    dist[nx] = cost + nc;
+                    pq.offer(new int[] { cost + nc, nx });
+                }
+            }
         }
     }
 }
-
-
-
-
-
-
-
-
